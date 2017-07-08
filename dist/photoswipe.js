@@ -3477,7 +3477,8 @@ var _historyUpdateTimeout,
 	_supportsPushState,
 
 	_getHash = function() {
-		return _windowLoc.hash.substring(1);
+		var hash = _windowLoc.hash;
+		return (hash[1] === '!') ? hash.split('#')[2] || '' : hash.slice(1);
 	},
 	_cleanHistoryTimeouts = function() {
 
@@ -3565,7 +3566,14 @@ var _historyUpdateTimeout,
 			// first time - add new hisory record, then just replace
 		}
 
-		var newURL = _windowLoc.href.split('#')[0] + '#' +  newHash;
+		var hashbangData = _windowLoc.href.split('#!');
+		var newURL;
+		if(hashbangData.length > 1) {
+			newHash = '!' + hashbangData[1].split('#')[0] + '#' + newHash;
+			newURL = hashbangData[0] + '#' + newHash;
+		} else {
+			newURL = _windowLoc.href.split('#')[0] + '#' +  newHash;
+		}
 
 		if( _supportsPushState ) {
 
